@@ -1,9 +1,8 @@
-const { Router, application } = require("express");
+const { Router } = require("express");
 const router = Router();
+const { controllerget, controllerpost } = require("../controllers");
 
-router.get("/users", function (req, res) {
-  console.log(req.body);
-  res.json({ message: "Hola soy la respuesta", id: "222", name: "Carlos" });
-});
+router.get("/products/:productid", controllerget);
+router.post("/products", controllerpost);
 
 module.exports = router;

@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: false })); //Permitimos recibir datos de 
 app.use(router);
 
 app.listen(3000, (error) => {
-  error ? console.log(error) : console.log("Server corriendo running");
+  error ? console.log(error) : console.log("Server running");
 });
 
 // importacion express
