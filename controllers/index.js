@@ -54,7 +54,6 @@ const obtenerMascota = async (req, res) => {
       res.status(200).send({
         data: dbResponse.rows,
       });
-      console.log(dbResponse.rows);
     } else {
       res.status(404).send({
         message: "Mascota no fue encontrada",
@@ -67,12 +66,62 @@ const obtenerMascota = async (req, res) => {
   }
 };
 
-const modificarMascota = (req, res) => {
-  console.log("modificar mascota");
+const modificarMascota = async (req, res) => {
+  const id = req.params.idMascota;
+  const { nombre, tipo, raza, edad, propietario_id } = req.body;
+
+  try {
+    const dbResponse = await connect.query(
+      `
+    UPDATE mascotas
+      SET nombre = $1,
+      tipo = $2,
+      raza = $3,
+      edad = $4,
+      propietario_id = $5
+    WHERE id_mascota = $6
+    `,
+      [nombre, tipo, raza, edad, propietario_id, id]
+    );
+
+    if (dbResponse.rowCount > 0) {
+      res.status(200).send({
+        message: "Mascota Modificada",
+      });
+    } else {
+      res.status(409).send({
+        message: "No se pudo modifcar la mascota en este momento",
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      error,
+    });
+  }
 };
 
-const eliminarMascota = (req, res) => {
-  console.log("eliminar mascota");
+const eliminarMascota = async (req, res) => {
+  const id = req.params.idMascota;
+  try {
+    const dbResponse = await connect.query(
+      `DELETE FROM mascotas WHERE id_mascota = $1`,
+      [id]
+    );
+
+    if (dbResponse.rowCount > 0) {
+      res.status(200).send({
+        message: "Mascota eliminada",
+      });
+    } else {
+      res.status(409).send({
+        message: "No se pudo eliminar la mascota en este momento.",
+      });
+    }
+  } catch (error) {
+    res.status(400).send({
+      error,
+    });
+  }
 };
 
 module.exports = {
