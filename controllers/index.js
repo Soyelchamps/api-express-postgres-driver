@@ -1,4 +1,5 @@
 const connect = require("../database");
+const { createToken } = require("../utils");
 
 // req ---> recibe los datos
 // res ---> responde al cliente
@@ -159,6 +160,11 @@ const loginController = async (req, res) => {
     );
 
     if (dbResponse.rowCount > 0) {
+      const datos = {
+        id: dbResponse.rows(0).id,
+        email: dbResponse.rows(0).email,
+      };
+      const token = createToken(data);
       res.status(200).send({
         data: dbResponse.rows,
       });
