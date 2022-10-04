@@ -124,10 +124,61 @@ const eliminarMascota = async (req, res) => {
   }
 };
 
+//Registreo
+const registerController = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const dbResponse = await connect.query(
+      "INSERT INTO admins(email, password) VALUES($1, crypt($2, gen_salt('bf')))",
+      [email, password]
+    );
+
+    if (dbResponse.rowCount > 0) {
+      res.status(201).send({
+        message: "Admin creado",
+      });
+    } else {
+      res.status(409).send({
+        message: "No se pudo crear el admin.",
+      });
+    }
+  } catch (error) {
+    res.status(409).send({
+      error,
+    });
+  }
+};
+const loginController = async (req, res) => {
+  const { email, bodyPassword } = req.body;
+
+  try {
+    const dbResponse = await connect.query(
+      "SELECT * FROM admins WHERE email = $1 AND password = crypt($2, password)",
+      [email, bodyPassword]
+    );
+
+    if (dbResponse.rowCount > 0) {
+      res.status(200).send({
+        data: dbResponse.rows,
+      });
+    } else {
+      res.status(404).send({
+        message: "Usuario o contraseña incorrectos.",
+      });
+    }
+  } catch (error) {
+    res.status(404).send({
+      error,
+    });
+  }
+};
 module.exports = {
   crearMascota,
   obtenerTodasMascotas,
   obtenerMascota,
   modificarMascota,
   eliminarMascota,
+  loginController,
+  registerController,
 };
